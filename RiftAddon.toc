@@ -2,7 +2,7 @@ Identifier = "PullTimer"
 
 Name = "PullTimer"
 
-Description = "Triggers a pull-timer before a Boss Encounter. Type /pt # into the chat console to initiate (# represents a number)."
+Description = "Used to manually trigger a pull-timer before a Boss Encounter for co-ordinating pre-buff or for tanking convenience. Type /pt # into the chat console to initiate (# represents a number)."
 
 Author = "Kapnia@Gelidra / Exrou@Greybriar"
 
