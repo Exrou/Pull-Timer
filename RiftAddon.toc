@@ -1,0 +1,17 @@
+Identifier = "PullTimer"
+
+Name = "PullTimer"
+
+Description = "Triggers a pull-timer before a Boss Encounter (Raids Only). Type /pt # into the chat console to initiate (# represents a number)."
+
+Author = "Kapnia@Gelidra / Exrou@Greybriar"
+
+Version = "1"
+
+Email = "my@mail.com"
+
+Environment = "3.6"
+
+RunOnStartup = {
+  "main.lua",
+}
