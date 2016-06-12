@@ -85,6 +85,14 @@ function messages(handle, from, messagetype, channel, id, data)
 		else
 			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
+	elseif (channel == nil and id == ptAddonID and messagetype == "party") then
+		local seconds = data
+		initPull(tonumber(seconds))
+		if (tonumber(seconds) == 1) then
+			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " second pull timer.", true)
+		else
+			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
+		end
 	end
 end
 
@@ -99,7 +107,7 @@ function slash_pt(handle, parameter)
 		else
 			Command.Console.Display("general", true, "You initiated a " .. colorize(parameter, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
-		Command.Message.Broadcast("raid", nil, ptAddonID, tostring(secs));
+		Command.Message.Broadcast("party", nil, ptAddonID, tostring(secs));
 		initPull(secs)
 	elseif (parameter == "") then
 		Command.Console.Display("general", true, colorize("============================", 0x0065FF, 0x00D0FF), true)
