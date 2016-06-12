@@ -108,6 +108,7 @@ function slash_pt(handle, parameter)
 			Command.Console.Display("general", true, "You initiated a " .. colorize(parameter, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
 		Command.Message.Broadcast("party", nil, ptAddonID, tostring(secs));
+		Command.Message.Broadcast("raid", nil, ptAddonID, tostring(secs));
 		initPull(secs)
 	elseif (parameter == "") then
 		Command.Console.Display("general", true, colorize("============================", 0x0065FF, 0x00D0FF), true)
