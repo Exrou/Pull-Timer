@@ -77,15 +77,7 @@ end
 -- // MESSAGE: RAID/PARTY
 -------------------------------------------------------
 function messages(handle, from, messagetype, channel, id, data)
-	if (channel == nil and id == ptAddonID and messagetype == "raid") then
-		local seconds = data
-		initPull(tonumber(seconds))
-		if (tonumber(seconds) == 1) then
-			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " second pull timer.", true)
-		else
-			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
-		end
-	elseif (channel == nil and id == ptAddonID and messagetype == "party") then
+	if (channel == nil and id == ptAddonID and messagetype == "party" or messagetype == "raid") then
 		local seconds = data
 		initPull(tonumber(seconds))
 		if (tonumber(seconds) == 1) then
@@ -107,9 +99,13 @@ function slash_pt(handle, parameter)
 		else
 			Command.Console.Display("general", true, "You initiated a " .. colorize(parameter, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
+		
+		-- Party/Raid Broadcast
 		Command.Message.Broadcast("party", nil, ptAddonID, tostring(secs));
 		Command.Message.Broadcast("raid", nil, ptAddonID, tostring(secs));
+		
 		initPull(secs)
+		
 	elseif (parameter == "") then
 		Command.Console.Display("general", true, colorize("============================", 0x0065FF, 0x00D0FF), true)
 		Command.Console.Display("general", true, "  - <font color=\"#FFFF00\">/pt</font> <font color=\"#00D0FF\">number</font>", true)
