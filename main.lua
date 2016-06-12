@@ -85,14 +85,6 @@ function messages(handle, from, messagetype, channel, id, data)
 		else
 			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
-	elseif (channel == nil and id == ptAddonID and messagetype == "party") then
-		local seconds = data
-		initPull(tonumber(seconds))
-		if (tonumber(seconds) == 1) then
-			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " second pull timer.", true)
-		else
-			Command.Console.Display("general", true, colorize(from, 0x00D0FF, 0x00D0FF) .. " has initiated a " .. colorize(data, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
-		end
 	end
 end
 
