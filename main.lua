@@ -14,14 +14,21 @@ local secs = nil
 
 local pull_initiated = false
 
-local timer = nil
-
 local context = UI.CreateContext("SampleContext")
+
+local colorize
+local extractColors
+local loadVars
+local messages
+local slash_pt
+local updateTimer
+local initPull
+local spam
 
 -------------------------------------------------------
 -- // ADD-ON FRAME
 -------------------------------------------------------
-timer = UI.CreateFrame("Text", "SampleText", context)
+local timer = UI.CreateFrame("Text", "SampleText", context)
 timer:SetFontSize(250)
 timer:SetFontColor(1, 0, 0, 1)
 timer:SetText("Debug")
@@ -67,7 +74,7 @@ end
 -------------------------------------------------------
 -- // MESSAGE: INIT
 -------------------------------------------------------
-local function loadVars(addon)
+function loadVars(addon)
 	if addon == "PullTimer" then
 		Command.Console.Display("general", true, colorize("Pull Timer v1.0 loaded. /pt # (# is an input number between 0 and 59).", 0xC03029, 0xDDD03A), true)
 	end
@@ -135,7 +142,7 @@ end
 -- // CALCULATIONS
 -------------------------------------------------------
 function initPull(n)
-	time = os.date("*t")
+	local time = os.date("*t")
 	pull = time.sec + n + 1
 	if pull > 59 then
 		pull = pull - 60
@@ -146,7 +153,7 @@ end
 local prev_sec = nil
 
 function spam()
-	time = os.date("*t")
+	local time = os.date("*t")
 	if( prev_sec ~= time.sec) then
 		prev_sec = time.sec
 		
@@ -164,7 +171,7 @@ function spam()
 			end
 			
 			if remaining < 10 then
-				updateTimer("" .. remaining .. "")
+				updateTimer(tostring(remaining))
 			end
 
 			if remaining == 0 then
