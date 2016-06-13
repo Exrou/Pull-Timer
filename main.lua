@@ -84,7 +84,7 @@ end
 -- // MESSAGE: RAID/PARTY
 -------------------------------------------------------
 function messages(handle, from, messagetype, channel, id, data)
-	if (channel == nil and id == ptAddonID and messagetype == "party" or messagetype == "raid") then
+	if channel == nil and id == ptAddonID and (messagetype == "party" or messagetype == "raid") then
 		local seconds = data
 		initPull(tonumber(seconds))
 		if (tonumber(seconds) == 1) then
