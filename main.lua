@@ -5,7 +5,7 @@
 					   Game: RIFT - Planes of Telara
 	  -----------------------------------------------------------------
 --]]
-
+local addon, pt = ...
 local ptAddonID = "PT01"
 
 local pull = nil
@@ -24,18 +24,26 @@ local slash_pt
 local updateTimer
 local initPull
 local spam
+local round
+local pullTime
 
 -------------------------------------------------------
 -- // ADD-ON FRAME
 -------------------------------------------------------
-local timer = UI.CreateFrame("Text", "SampleText", context)
-timer:SetFontSize(250)
-timer:SetFontColor(1, 0, 0, 1)
-timer:SetText("Debug")
-timer:SetWidth(timer:GetWidth())
-timer:SetHeight(timer:GetHeight())
-timer:SetPoint("TOPCENTER", UIParent, "TOPCENTER", 275, 250)
-timer:SetVisible(false)
+-- local timer = UI.CreateFrame("Text", "SampleText", context)
+-- timer:SetFontSize(250)
+-- timer:SetFontColor(1, 0, 0, 1)
+-- timer:SetText("Debug")
+-- timer:SetWidth(timer:GetWidth())
+-- timer:SetHeight(timer:GetHeight())
+-- timer:SetPoint("TOPCENTER", UIParent, "TOPCENTER", 275, 250)
+-- timer:SetVisible(false)
+
+local bar = pt.Bar.new(context)
+bar:SetWidth(400)
+bar:SetHeight(50)
+bar:SetFontSize(25)
+bar:SetVisible(false)
 
 -------------------------------------------------------
 -- // COLOR FUNCTION
@@ -46,7 +54,7 @@ function colorize(text, fromHex, toHex)
 
 	local from = {extractColors(fromHex)}
 	local to = {extractColors(toHex)}
-	
+
 	local step = {
 		r = (to[1] - from[1]) / len,
 		g = (to[2] - from[2]) / len,
@@ -106,13 +114,13 @@ function slash_pt(handle, parameter)
 		else
 			Command.Console.Display("general", true, "You initiated a " .. colorize(parameter, 0xFF0000, 0xFF0000) .. " seconds pull timer.", true)
 		end
-		
+
 		-- Party/Raid Broadcast
 		Command.Message.Broadcast("party", nil, ptAddonID, tostring(secs));
 		Command.Message.Broadcast("raid", nil, ptAddonID, tostring(secs));
-		
+
 		initPull(secs)
-		
+
 	elseif (parameter == "") then
 		Command.Console.Display("general", true, colorize("============================", 0x0065FF, 0x00D0FF), true)
 		Command.Console.Display("general", true, "  - <font color=\"#FFFF00\">/pt</font> <font color=\"#00D0FF\">number</font>", true)
@@ -127,66 +135,67 @@ end
 -- // MESSAGE: COUNT-DOWN TIMER
 -------------------------------------------------------
 function updateTimer(n)
-	timer:SetText(n)
-	timer:SetFontColor(1, 0, 0, 1)
-	timer:SetVisible(true)
-	-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] below in the "Pull Timer - Initialise" section.
-	if n == "" then
-		timer:SetFontColor(0, 1, 0, 1)
+	local message
+	if n <= 0 then
+		message = "PULL!"
 	else
-		timer:SetFontColor(1, 1, 1, 1)
+		message = string.format("%.1f", n)
 	end
+	
+	bar:SetText(tostring(message))
+	bar:SetPercentage(n/pullTime)
+	bar:SetVisible(true)
+	-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] below in the "Pull Timer - Initialise" section.
 end
 
 -------------------------------------------------------
 -- // CALCULATIONS
 -------------------------------------------------------
 function initPull(n)
-	local time = os.date("*t")
-	pull = time.sec + n + 1
+	pullTime = n
+	if n == nil then
+		return
+	end
+	pull = Inspect.Time.Frame() + n
 	if pull > 59 then
 		pull = pull - 60
 	end
 	pull_initiated = true
 end
 
-local prev_sec = nil
+local previousTime = nil
 
 function spam()
-	local time = os.date("*t")
-	if( prev_sec ~= time.sec) then
-		prev_sec = time.sec
-		
-		if pull_initiated == true and pull ~= nil then
-		
-			local remaining = pull - prev_sec
-			
-			if remaining < -1 then
-				remaining = remaining + 60
-			end
-			
-			if remaining > 9 then
-				updateTimer("")
-				print(remaining)
-			end
-			
-			if remaining < 10 then
-				updateTimer(tostring(remaining))
-			end
+	local time = Inspect.Time.Frame()
+	previousTime = time
 
-			if remaining == 0 then
-			-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] above in the "Pull Timer - Count Update" section.
-				updateTimer("")
-			end
-			
-			if remaining == -1 then
-				timer:SetVisible(false)
-				pull = nil
-				pull_initiated = false
-			end
-			
+	if pull_initiated == true and pull ~= nil then
+
+		local remaining = pull - previousTime
+
+		if remaining < -1 then
+			remaining = remaining + 60
 		end
-		
+
+		if remaining > 9 then
+			updateTimer(remaining)
+			print(remaining)
+		end
+
+		if remaining < 10 then
+			updateTimer(remaining)
+		end
+
+		if remaining <= 0 and remaining > -3 then
+		-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] above in the "Pull Timer - Count Update" section.
+			updateTimer(remaining)
+		end
+
+		if remaining <= -3 then
+			bar:SetVisible(false)
+			pull = nil
+			pull_initiated = false
+		end
 	end
 end
 
