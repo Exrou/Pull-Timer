@@ -13,5 +13,6 @@ Email = "my@mail.com"
 Environment = "3.6"
 
 RunOnStartup = {
+  "bar.lua",
   "main.lua",
 }

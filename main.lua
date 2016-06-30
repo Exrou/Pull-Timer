@@ -5,7 +5,7 @@
 					   Game: RIFT - Planes of Telara
 	  -----------------------------------------------------------------
 --]]
-
+local addon, pt = ...
 local ptAddonID = "PT01"
 
 local pull = nil
@@ -25,18 +25,25 @@ local updateTimer
 local initPull
 local spam
 local round
+local pullTime
 
 -------------------------------------------------------
 -- // ADD-ON FRAME
 -------------------------------------------------------
-local timer = UI.CreateFrame("Text", "SampleText", context)
-timer:SetFontSize(250)
-timer:SetFontColor(1, 0, 0, 1)
-timer:SetText("Debug")
-timer:SetWidth(timer:GetWidth())
-timer:SetHeight(timer:GetHeight())
-timer:SetPoint("TOPCENTER", UIParent, "TOPCENTER", 275, 250)
-timer:SetVisible(false)
+-- local timer = UI.CreateFrame("Text", "SampleText", context)
+-- timer:SetFontSize(250)
+-- timer:SetFontColor(1, 0, 0, 1)
+-- timer:SetText("Debug")
+-- timer:SetWidth(timer:GetWidth())
+-- timer:SetHeight(timer:GetHeight())
+-- timer:SetPoint("TOPCENTER", UIParent, "TOPCENTER", 275, 250)
+-- timer:SetVisible(false)
+
+local bar = pt.Bar.new(context)
+bar:SetWidth(400)
+bar:SetHeight(50)
+bar:SetFontSize(25)
+bar:SetVisible(false)
 
 -------------------------------------------------------
 -- // COLOR FUNCTION
@@ -128,21 +135,24 @@ end
 -- // MESSAGE: COUNT-DOWN TIMER
 -------------------------------------------------------
 function updateTimer(n)
-	timer:SetText(n)
-	timer:SetFontColor(1, 0, 0, 1)
-	timer:SetVisible(true)
-	-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] below in the "Pull Timer - Initialise" section.
-	if n == "" then
-		timer:SetFontColor(0, 1, 0, 1)
+	local message
+	if n <= 0 then
+		message = "PULL!"
 	else
-		timer:SetFontColor(1, 1, 1, 1)
+		message = string.format("%.1f", n)
 	end
+	
+	bar:SetText(tostring(message))
+	bar:SetPercentage(n/pullTime)
+	bar:SetVisible(true)
+	-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] below in the "Pull Timer - Initialise" section.
 end
 
 -------------------------------------------------------
 -- // CALCULATIONS
 -------------------------------------------------------
 function initPull(n)
+	pullTime = n
 	if n == nil then
 		return
 	end
@@ -168,21 +178,21 @@ function spam()
 		end
 
 		if remaining > 9 then
-			updateTimer("")
+			updateTimer(remaining)
 			print(remaining)
 		end
 
 		if remaining < 10 then
-			updateTimer(string.format("%.1f", remaining))
+			updateTimer(remaining)
 		end
 
-		if remaining <= 0 and remaining > -1 then
+		if remaining <= 0 and remaining > -3 then
 		-- You can create your own 0 timer message below, just make sure it is the same as the line with [***] above in the "Pull Timer - Count Update" section.
-			updateTimer("")
+			updateTimer(remaining)
 		end
 
-		if remaining <= -1 then
-			timer:SetVisible(false)
+		if remaining <= -3 then
+			bar:SetVisible(false)
 			pull = nil
 			pull_initiated = false
 		end
